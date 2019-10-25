@@ -1,0 +1,46 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'sns/css/bootstrap.min.css' %}">
+        <!-- font -->
+        <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+        <!-- custom css -->
+        <link rel="stylesheet" href="{% static 'sns/css/custom.css' %}">
+        <title>FoodBankの登録</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <p>アプリロゴ</p>
+                    <div class="signup-wrapper">
+                        <p class="title">ユーザー登録</p>
+                        <form method="POST">
+                            {% csrf_token %}
+                            <p class="label">ユーザーID</p>
+                            {{ form.userid }}
+                            <p class="label">ユーザー名</p>
+                            {{ form.username }}
+                            <p class="label">メールアドレス</p>
+                            {{ form.email }}
+                            <p class="label">パスワード</p>
+                            {{ form.password1 }}
+                            <p class="label">パスワードをもう一度入力してください</p>
+                            {{ form.password2 }}
+                            <button class="signup-btn" type="submit">Foodbankアカウント作成</button>
+                            <p>すでにアカウントをお持ちの方　<a href="{% url 'sns:login' %}">ログイン</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'sns/js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'sns/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'sns/js/jquery.uploadThumbs.js' %}"></script>
+        <script src="{% static 'sns/js/custom.js' %}"></script>
+    </body>
+</html>

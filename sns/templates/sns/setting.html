@@ -1,0 +1,73 @@
+{% extends 'sns/base.html' %}
+{% load static %}
+
+{% block title %}
+設定
+{% endblock %}
+
+{% block content %}
+<div class="container main-contents">
+    <div class="row">
+        <div class="col-md-3 d-none d-md-block profile-container">
+            <div class="profile-main">
+                <div class="px-1">
+                    <div class="username">
+                        <p class="username1">{{ user.username }}</p>
+                        <p class="username2">(ID:{{ user.userid }})</p>
+                    </div>
+                    <div class="profile-pic">
+                    <img class="thumbnail" src="{{ user.thumbnail.url }}">
+                    </div>
+                </div>
+                <a href="{% url 'sns:setting' user.pk %}">
+                    <div class="setting-navi">
+                        ユーザー情報の編集
+                    </div>
+                </a>
+                <a href="{% url 'sns:email_change' %}">
+                    <div class="setting-navi">
+                        メールアドレスの変更
+                    </div>
+                </a>
+                <a href="{% url 'sns:password_change' %}">
+                    <div class="setting-navi">
+                        パスワードの変更
+                    </div>
+                </a>
+                <a href="{% url 'sns:logout' %}">
+                    <div class="setting-navi">
+                        ログアウト
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6 setting-wrapper">
+            <div class="row justify-content-center">
+                <div class="col-8">
+                    <div class="setting-content">
+                        <p class="title">ユーザー情報の編集</p>
+                        <form method="post" action="" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <p class="label">ユーザー名</p>
+                            {{ form.username }}
+                            <p class="label">サムネイル画像</p>
+                            <div class="form-group">
+                                <p id="preview"></p>
+                                <p class="upload">
+                                    <label>
+                                        {{ form.thumbnail }}
+                                        <img id="file_loader" class="button mw-100" src="{% static 'sns/images/post3.png' %}" alt=""/>
+                                    </label>
+                                </p>
+                            </div>
+                            <p class="label">自己紹介</p>
+                            {{ form.self_intro }}
+                            <button class="signup-btn" type="submit">変更完了</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

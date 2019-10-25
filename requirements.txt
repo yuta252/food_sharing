@@ -1,0 +1,8 @@
+##### Requirements for app ######
+django
+
+
+##### Requirements for deeplearning ######
+torch==0.4.1.post2
+torchvision==0.2.1
+opencv-contrib-python

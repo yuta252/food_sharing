@@ -1,0 +1,272 @@
+{% extends 'sns/base.html' %}
+{% load static %}
+{% load my_filter %}
+
+{% block title %}
+Food Bank
+{% endblock %}
+
+{% block content %}
+<div class="container main-contents">
+    <div class="row">
+        <div class="col-md-3 d-none d-md-block profile-container">
+            <div class="profile-main">
+                <div class="px-1">
+                    <div class="username">
+                        <p class="username1">{{ user.username }}</p>
+                        <p class="username2">(ID:{{ user.userid }})</p>
+                    </div>
+                    <div class="profile-pic">
+                    <img class="thumbnail" src="{{ user.thumbnail.url }}">
+                    </div>
+                </div>
+                <div class="user-detail">
+                    <table>
+                        <tr>
+                            <th>サポート</th>
+                            <td>{{ support_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>サポーター</th>
+                            <td>{{ supporter_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>レポート</th>
+                            <td>{{ report_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>総いいね</th>
+                            <td>{{ good_count }}</td>
+                        </tr>
+                        <tr>
+                            <th>総シェア</th>
+                            <td>{{ share_count }}</td>
+                        </tr>
+                    </table>
+                    <div class="profile-comment">
+                        <p class="comment-content">{{ user.self_intro | urlize}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 main-wrapper">
+            <!-- Upload file -->
+            <div class="upload-main">
+                <div class="row">
+                    <div class="col-md-9 px-1 mx-auto uploader mb-3">
+                        <form method="post" action="" enctype="multipart/form-data">
+                            <!-- set border for post grope: preview, uploader, comment -->
+                            <div class="postform">
+                                <div class="form-group">
+                                    <p id="preview"></p>
+                                    <p class="upload">
+                                        <label>
+                                            {{ form.post_pic }}
+                                            <img id="file_loader" class="button mw-100" src="{% static 'sns/images/post3.png' %}" alt=""/>
+                                        </label>
+                                    </p>
+                                </div>
+                                <div class="input-group mb-2">
+                                    {{ form.content }}
+                                </div>
+                                <fieldset>
+                                    <input id="item-1" class="radio-inline__input" type="radio" name="public" value="1" checked="checked"/>
+                                    <label class="radio-inline__label" for="item-1"> 公開 </label>
+                                    <input id="item-2" class="radio-inline__input" type="radio" name="public" value="0"/>
+                                    <label class="radio-inline__label" for="item-2">非公開</label>
+                                </fieldset>
+                            </div>
+                            {% csrf_token %}
+                            <div class="row justify-content-center">
+                                <button class="btn btn-post" type="submit">レポート</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="post-wrapper">
+                {% if not message_list %}
+                <div class="post-default">
+                    <p>
+                        レポートが投稿されていません<br>
+                        <a href="{% url 'sns:global' %}">グルレポ</a>から興味のあるユーザーをサポートすると表示されます
+                    </p>
+                </div>
+                {% endif %}
+                {% for message in message_list %}
+                <div class="post-content">
+                    <div class="row post-title">
+                        <div class="col-1 px-0 ml-3 mr-1">
+                            {% if message.owner.email == request.user.email %}
+                            <a href="{% url 'sns:mypage' %}">
+                            {% else %}
+                            <a href="{% url 'sns:friends' message.owner.pk %}">
+                            {% endif %}
+                            <img class="user-thum" src="{{ message.owner.thumbnail.url }}">
+                            </a>
+                        </div>
+                        <div class="col-6 px-0">
+                            {% if message.owner.email == request.user.email %}
+                            <a href="{% url 'sns:mypage' %}">
+                            {% else %}
+                            <a href="{% url 'sns:friends' message.owner.pk %}">
+                            {% endif %}
+                            <p class="post-name">{{ message.owner.username }}<span>(ID:{{ message.owner.userid }})</span></p>
+                            </a>
+                        </div>
+                        <div class="col-4 px-0">
+                            <p class="post-time">レポート日：{{ message.pub_date }}</p>
+                        </div>
+                    </div>
+                    <div class="pic-wapper">
+                        <img class="post-pic" src="{{ message.post_pic.url }}">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-10 px-4">
+                            <div class="tag-wrapper">
+                                パスタ
+                            </div>
+                        </div>
+                        {% if message.owner.email == request.user.email %}
+                        <div class="col-2">
+                            削除する
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="post-body">
+                        <p class="post-text">{{ message.content | linebreaksbr | urlize}}</p>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col-4 px-4">
+                            <a href="{% url 'sns:message' message.pk %}">
+                            <div class="comment-wrapper">
+                                <i class="far fa-comment"></i>コメント
+                            </div>
+                            </a>
+                        </div>
+                        <div class="col-4 px-4">
+                            <div class="hidden" style="display:none">{{ message.pk }}</div>
+                            {% if not good|is_good_exists:message.pk %}
+                                <div class="good-btn"><i class="far fa-grin-wink"></i>いいね</div>
+                            {% else %}
+                                <div class="nogood-btn"><i class="far fa-grin-wink"></i>いいね解除</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-4 px-4">
+                            <div class="hidden" style="display:none">{{ message.pk }}</div>
+                            {% if not share|is_good_exists:message.pk %}
+                                <div class="share-btn"><i class="fas fa-share-square"></i>シェア</div>
+                            {% else %}
+                                <div class="noshare-btn"><i class="fas fa-share-square"></i>シェア解除</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extrajs %}
+<script>
+
+$(function(){
+    var message = 0
+    $('.good-btn').on('click',function(e){
+        e.preventDefault();
+        var that = this;
+        message = $(that).prev('.hidden').text();
+        //Ajax処理
+        $.ajax({
+            url: "{% url 'sns:good_ajax' %}",
+            type: "get",
+            dataType: "json",
+            data:{
+                "message": message,
+            },
+            success: function(data){
+                $(that).text(data.display);
+                $(that).addClass(data.addcss);
+                $(that).removeClass(data.removecss);
+            },
+        })
+    });
+});
+
+$(function(){
+    var message = 0
+    $('.nogood-btn').on('click',function(e){
+        e.preventDefault();
+        var that = this;
+        message = $(that).prev('.hidden').text();
+        //Ajax処理
+        $.ajax({
+            url: "{% url 'sns:good_ajax' %}",
+            type: "get",
+            dataType: "json",
+            data:{
+                "message": message,
+            },
+            success: function(data){
+                $(that).text(data.display);
+                $(that).addClass(data.addcss);
+                $(that).removeClass(data.removecss);
+            },
+        })
+    });
+});
+
+$(function(){
+    var message = 0
+    $('.share-btn').on('click',function(e){
+        e.preventDefault();
+        var that = this;
+        message = $(that).prev('.hidden').text();
+        //Ajax処理
+        $.ajax({
+            url: "{% url 'sns:share_ajax' %}",
+            type: "get",
+            dataType: "json",
+            data:{
+                "message": message,
+            },
+            success: function(data){
+                $(that).text(data.display);
+                $(that).addClass(data.addcss);
+                $(that).removeClass(data.removecss);
+            },
+        })
+    });
+});
+
+$(function(){
+    var message = 0
+    $('.noshare-btn').on('click',function(e){
+        e.preventDefault();
+        var that = this;
+        message = $(that).prev('.hidden').text();
+        //Ajax処理
+        $.ajax({
+            url: "{% url 'sns:share_ajax' %}",
+            type: "get",
+            dataType: "json",
+            data:{
+                "message": message,
+            },
+            success: function(data){
+                $(that).text(data.display);
+                $(that).addClass(data.addcss);
+                $(that).removeClass(data.removecss);
+            },
+        })
+    });
+});
+
+</script>
+
+{% endblock %}

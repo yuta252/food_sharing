@@ -1,0 +1,40 @@
+{% load static %}
+<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="{% static 'sns/css/bootstrap.min.css' %}">
+        <!-- font -->
+        <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+        <!-- custom css -->
+        <link rel="stylesheet" href="{% static 'sns/css/custom.css' %}">
+        <title>本登録完了</title>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-4">
+                    <p>アプリロゴ</p>
+                    <div class="signup-wrapper">
+                        <p class="title">本登録完了</p>
+                        <p>
+                            本登録が完了しました。<br>
+                            登録されたメールアドレスとパスワードでログインしてください。
+                        </p>
+                        <a href="{% url 'sns:login' %}">
+                            <div class="login-btn">
+                                ログイン
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'sns/js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'sns/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static 'sns/js/jquery.uploadThumbs.js' %}"></script>
+        <script src="{% static 'sns/js/custom.js' %}"></script>
+    </body>
+</html>

@@ -1,0 +1,97 @@
+{% extends 'sns/base.html' %}
+{% load static %}
+
+{% block title %}
+Private
+{% endblock %}
+
+{% block content %}
+<div class="container main-contents">
+    <div class="row">
+        <div class="col-md-4 profile-container">
+            <div class="row profile-main">
+                <div class="col-5 px-1">
+                    <div class="username">
+                        <p class="username1">{{ user.username }}</p>
+                        <p class="username2">(ID:{{ user.userid }})</p>
+                    </div>
+                    <div class="profile-pic">
+                    <img class="thumbnail" src="{{ user.thumbnail.url }}">
+                    </div>
+                </div>
+                <div class="col-7 px-1 user-detail">
+                    <table>
+                        <tr>
+                            <th>サポート</th>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <th>サポーター</th>
+                            <td>40</td>
+                        </tr>
+                        <tr>
+                            <th>レポート</th>
+                            <td>40</td>
+                        </tr>
+                        <tr>
+                            <th>総いいね</th>
+                            <td>400</td>
+                        </tr>
+                        <tr>
+                            <th>総シェア</th>
+                            <td>1500</td>
+                        </tr>
+                    </table>
+                    <div class="profile-comment">
+                        <p class="comment-title">コメント</p>
+                        <p class="comment-content">{{ user.self_intro }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 main-wrapper">
+            <div class="post-wrapper">
+                {% for message in message_list %}
+                <div class="post-content">
+                    <div class="row post-title">
+                        <div class="col-1 px-0 ml-3 mr-1">
+                            {% if message.owner.email == request.user.email %}
+                                <a href="{% url 'sns:mypage' %}">
+                            {% else %}
+                                <a href="{% url 'sns:friends' message.owner.pk %}">
+                            {% endif %}
+                            <img class="user-thum" src="{{ message.owner.thumbnail.url }}">
+                            </a>
+                        </div>
+                        <div class="col-8 px-0">
+                            <p class="post-name">{{ message.owner.username }}<span>(ID:{{ message.owner.userid }})</span></p>
+                        </div>
+                        <div class="col-2">
+                            <p class="post-time">{{ message.pub_date }}</p>
+                        </div>
+                    </div>
+                    <div class="pic-wapper">
+                        <img class="post-pic" src="{{ message.post_pic.url }}">
+                    </div>
+                    <div class="post-body">
+                        <p class="post-text">{{ message.content | linebreaksbr }}</p>
+                    </div>
+                    <div class="row mr-3 justify-content-end">
+                        <div class="col-2 comment-btn">
+                            <a href="{% url 'sns:message' message.pk %}"><i class="far fa-comment"></i>コメント</a>
+                        </div>
+                        <div class="col-2 comment-btn">
+                            <i class="far fa-grin-wink"></i>いいね
+                        </div>
+                        <div class="col-2 comment-btn">
+                            <i class="fas fa-share-square"></i>シェア
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
